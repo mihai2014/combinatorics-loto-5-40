@@ -7,5 +7,6 @@ m=10
 max_intersect = 4
 arr = np.arange(start=1, stop=m+1, step=1)
 calc = Reducere(arr,max_intersect)
-calc.go()
+calc.go(criterion='max',max_cover='-')
+#calc.go(criterion='stddev',max_cover=95)
 

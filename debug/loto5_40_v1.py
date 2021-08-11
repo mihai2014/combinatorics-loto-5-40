@@ -124,59 +124,7 @@ class Reducere():
         #test 10 numbers (1st choice: total 55 intersections) for max_intersect = 4
         #print(self.fv(self.intersect[0]))
         
-        #print("Free mem: m1,m2")
-        #try:
-        #    del self.m1
-        #    del self.m2
-        #except:
-        #    pass
-        #gc.collect()        
-
-    def cover(self):
-        #print(np.sum(self.intersect[[self.solutions],:],axis=1))
-        solIntersects = self.intersect[[self.solutions],:] 
-        #c6 'hitted'
-        c6_total_intersects = np.sum(solIntersects,axis=1)
-        #total_c6 = self.intersect.shape[1]
-        total_c6 = c6_total_intersects.shape[1]
-        nonzero = np.count_nonzero(c6_total_intersects,axis=1)[0]
-        total_cover = (nonzero/total_c6)*100
-        return total_cover
-        
-    def select2(self,i,f):
-        
-        #all c5 indexes that are not solutions
-        all_c5_indexes_from_intersect = list(range(self.intersect.shape[0]))
-        for item in self.solutions:
-            all_c5_indexes_from_intersect.remove(item)
-
-        #c5 not selected yet    
-        #selectionPool = self.intersect[all_c5_indexes_from_intersect,:]
-        
-        #it = np.nditer(selectionPool, flags=['f_index'],order='C')
-        #for x in it:
-        #    print(f"{it.index}--{x}")
-
-        #columns sums (total intersections with every c6)
-        selectionSums = np.sum(self.intersect[self.solutions,:],axis=0)
-
-        minimStd = 100000
-        for idx in all_c5_indexes_from_intersect:
-            test_c5 = self.intersect[idx,:]
-            testSum = test_c5 + selectionSums
-            testStd = np.std(testSum)
-            if(testStd < minimStd):
-                minimStd = testStd
-                bestIdx = idx
-
-        f.write( str(self.c1[bestIdx])+'\n' )
-        self.solutions.append(bestIdx)        
-
-        cover = self.cover()
-        print(i,"Cover %:",cover,"idx:",bestIdx, "c5",self.c1[bestIdx],"Min-StdDev:",minimStd)
-        return cover
-        
-        
+    
     def select(self,i,f):
 
         #another possibility of selection : to explore
@@ -188,8 +136,6 @@ class Reducere():
         first_max_idx = np.where(nonzero == np.max(nonzero))[0][0]
         
         if(nonzero[first_max_idx] != 0):
-            cover = self.cover()
-            print(cover)
             print(i,"intersect:",nonzero[first_max_idx], "c5 selection (index):",first_max_idx, self.c1[first_max_idx])
 
             f.write( str(self.c1[first_max_idx])+'\n' )
@@ -234,9 +180,9 @@ class Reducere():
         self.intersect2 = np.where(self.intersect2 < self.max_intersect, 0, self.intersect2)
         
         print("ready")
-        #print("Solution intersections matrix:")
+        print("Solution intersections matrix:")
         #print(self.intersect2.shape)
-        #print(self.intersect2)
+        print(self.intersect2)
         
         print("verif-selected intersections: ",np.unique(self.intersect2))    
         
@@ -254,36 +200,38 @@ class Reducere():
         #fv 
         c6_total_cover_fv = self.fv(c6_hit)
         print("c6 cover frequency:\n", c6_total_cover_fv)
-        print("Total c6(verif): ", np.sum(c6_total_cover_fv,axis=0)[1])        
+        print("Total c6(verif): ", np.sum(c6_total_cover_fv,axis=0)[1])
+            
+        #calc_count = self.fv(t)
+        #print(calc_count)
+
+        #print("Solution intersections:")
+        
+        #nr = len(self.solutions)
+        #for nr in range(nr):
+        #    print("---------------------------")
+        #    c6_count = self.fv(self.intersect2[nr])
+        #    #exclude 0 frequency
+        #    c6_count = c6_count[c6_count[:,0] > 0] 
+        #    print(nr,'\n',c6_count)
+        
     
-    def go(self,criterion,max_cover):
+    def go(self):
         self.solutions = []
         self.calc_intersect()
 
         os.system("rm result.txt")
         f = open("result.txt", "a")
 
-        i=0
-
-        if(criterion == 'stddev'):    
-            #self.solutions=[0]
-            cover = 0
-            while(cover < max_cover):
-                i+=1
-                cover = self.select2(i,f)
-
-        if(criterion == 'max'):    
-            #i = 0
-            score = -1
-            while(score != 0):
-                i+=1
-                score = self.select(i,f)
-                
-            self.diagnose()    
+        i = 0
+        score = -1
+        while(score != 0):
+            i+=1
+            score = self.select(i,f)
 
         f.close()
 
-        
+        self.diagnose()
         
         print("See result.txt")
        
@@ -293,5 +241,4 @@ class Reducere():
 #max_intersect = 4
 #arr = np.arange(start=1, stop=m+1, step=1)
 #calc = Reducere(arr,max_intersect)
-#calc.go(criterion='max',max_cover='-')
-#calc.go(criterion='stddev',max_cover=95)
+#calc.go()

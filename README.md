@@ -2,7 +2,7 @@ Reduced scheme for Lotttery 5 from 40
 
 Requirements are python 3 and numpy.
 
-Select a reduced set (a local min anyway) of combination of 5 numbers (m choose 5) (from m <= 40) which have at least max_intersect common numbers with any combination of 6 numbers chosen from the m chosen numbers (m choose 6).
+Select a reduced set (a local min anyway) of combination of 5 numbers (m choose 5) (from m <= 40) which have at least max_intersect common numbers with any combination of 6 numbers chosen from the m chosen numbers (m choose 6), using either as criterion of selection, maxim number of c6 covered or minimul standard deviation of intersections sums between solutions (c5) and c6 combinations.
 
 For example (edit calc.py):
 
@@ -18,7 +18,9 @@ arr = np.arange(start=1, stop=m+1, step=1)
 
 calc = Reducere(arr,max_intersect)
 
-calc.go()
+calc.go(criterion='max',max_cover='-')
+
+#calc.go(criterion='stddev',max_cover=95)
 
 
 gives a scheme of 10 numbers:
