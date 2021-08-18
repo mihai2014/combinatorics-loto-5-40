@@ -25,27 +25,14 @@ import os
 import gc
 
 class Reducere():
-    def __init__(self, arr, max_intersect,nsigma=100):
+    def __init__(self, arr, max_intersect):
         print("init")
-        self.margin1 = 0
-        self.margin2 = 10000   
-        self.nsigma = nsigma
-        
         self.max_intersect = max_intersect
         self.intersect = np.empty([0])
         self.arr = arr
         self.n = len(self.arr)
         self.m1, self.c1 = self.matrix(self.arr,5)
-        self.m2, self.c2 = self.matrix(self.arr,6)   
-        
-        #delete c6 beyond the nsigma limits
-        allzero = np.where(~self.m2.any(axis=1))[0] 
-        self.m2 = np.delete(self.m2, allzero, axis=0)
-
-        if(len(allzero)!=0):
-            print("Reduced m2!")
-            print(f"We are using c6 only between {self.nsigma} sigma (std dev)")
-            
+        self.m2, self.c2 = self.matrix(self.arr,6)     
         print("m1-",self.m1.shape)
         print("m2-",self.m2.shape)        
         print("ready")
@@ -82,54 +69,26 @@ class Reducere():
         comb = self.comb(arr,k)
         cols = self.n
         rows = math.comb(cols,k)
-
-        if (k==6):
-            means = np.mean(comb,axis=1)
-            mu = np.mean(means)
-            sigma = np.std(means)
-            print("miu-mean",mu,"sigma-stdev", sigma)
-            self.margin2 = mu+sigma*self.nsigma
-            self.margin1 = mu-sigma*self.nsigma   
-            print("margin1",self.margin1,"margin2",self.margin2)
         
         z = np.zeros((rows,cols), dtype = np.int8)
         i = 0
         for c in comb:
-
-            if(k == 6):
-                n1 = c[0]
-                n2 = c[1]
-                n3 = c[2]
-                n4 = c[3]
-                n5 = c[4]
-                n6 = c[5]                
-                #print(n1,n2,n3,n4,n5,n6)
-                average = np.mean([n1,n2,n3,n4,n5,n6])
-                    
-                if (self.margin1 < average and average < self.margin2):    
-                    z[i,n1-1] = 1
-                    z[i,n2-1] = 1
-                    z[i,n3-1] = 1
-                    z[i,n4-1] = 1
-                    z[i,n5-1] = 1
-                    z[i,n6-1] = 1
-                else:
-                    pass
-                    #print("c6 out",average,n1,n2,n3,n4,n5,n6)
-                
-            if(k==5):
             
-                n1 = c[0]
-                n2 = c[1]
-                n3 = c[2]
-                n4 = c[3]
-                n5 = c[4]
-
-                z[i,n1-1] = 1
-                z[i,n2-1] = 1
-                z[i,n3-1] = 1
-                z[i,n4-1] = 1
-                z[i,n5-1] = 1
+            n1 = c[0]
+            n2 = c[1]
+            n3 = c[2]
+            n4 = c[3]
+            n5 = c[4]
+            if(k==6): 
+                n6 = c[5]
+            
+            z[i,n1-1] = 1
+            z[i,n2-1] = 1
+            z[i,n3-1] = 1
+            z[i,n4-1] = 1
+            z[i,n5-1] = 1
+            if(k==6): 
+                z[i,n6-1] = 1
                 
             #print(i,z[i])
             i += 1
@@ -142,8 +101,8 @@ class Reducere():
         sums = np.sum(self.m2,axis=1)
         #nr of 6's
         #print("c6-remaining",np.sum(sums)/6)
-        return (np.sum(sums)/6)            
-    
+        return (np.sum(sums)/6)
+
     def calc_intersect(self):
         #intersect
         #m1   rows = (index) C arr 5
@@ -161,8 +120,6 @@ class Reducere():
         print("end intersect")
         
         print("verif-distinct intersections selected: ",np.unique(self.intersect))
-    
-        print("intersect", self.intersect.shape)
     
         #test 10 numbers (1st choice: total 55 intersections) for max_intersect = 4
         #print(self.fv(self.intersect[0]))
@@ -301,12 +258,6 @@ class Reducere():
     
     def go(self,criterion,max_cover):
         self.solutions = []
-
-        #exclude all c6 that have the mean beyound n std deviations            
-
-        #import sys
-        #sys.exit(1)
-            
         self.calc_intersect()
 
         os.system("rm result.txt")
@@ -338,9 +289,9 @@ class Reducere():
        
 #arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 #or
-m=10
-max_intersect = 4
-arr = np.arange(start=1, stop=m+1, step=1)
-calc = Reducere(arr,max_intersect,nsigma=100)
-calc.go(criterion='max',max_cover='-')
-#calc.go(criterion='stddev',max_cover=100)
+#m=10
+#max_intersect = 4
+#arr = np.arange(start=1, stop=m+1, step=1)
+#calc = Reducere(arr,max_intersect)
+#calc.go(criterion='max',max_cover='-')
+#calc.go(criterion='stddev',max_cover=95)

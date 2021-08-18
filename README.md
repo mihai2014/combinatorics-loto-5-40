@@ -14,14 +14,16 @@ m=10
 
 max_intersect = 4
 
+nsigma = 100 #that means that all c6 will be processed
+#if nsigma = 1 or 2 for example, will be used only c6 between 1 or 2 std deviations (which are less likely to be chosen)  which result in a smaller matrix intersections and more computing power
+
 arr = np.arange(start=1, stop=m+1, step=1)
 
-calc = Reducere(arr,max_intersect)
+calc = Reducere(arr,max_intersect,nsigma)
 
 calc.go(criterion='max',max_cover='-')
 
-#calc.go(criterion='stddev',max_cover=95)
-
+#calc.go(criterion='stddev',max_cover=100)
 
 gives a scheme of 10 numbers:
 
