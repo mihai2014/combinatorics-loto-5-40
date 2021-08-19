@@ -303,6 +303,9 @@ class Reducere():
         print("Total c6(verif): ", np.sum(c6_total_cover_fv,axis=0)[1])        
     
     def go(self,criterion,max_cover):
+        #free unused memory
+        gc.collect()
+
         self.solutions = []
 
         #exclude all c6 that have the mean beyound n std deviations            
