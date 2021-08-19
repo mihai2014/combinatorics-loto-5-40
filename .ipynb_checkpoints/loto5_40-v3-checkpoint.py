@@ -17,8 +17,8 @@
 
 # Function which returns subset or r length from n
 from itertools import combinations
+
 import numpy as np
-from scipy.sparse import csr_matrix
 import math
 import sys
 import os
@@ -155,21 +155,10 @@ class Reducere():
         print("start intersect")
 
         #intersects between combinations (common digits)
-        #self.intersect = self.m1 @ self.m2.T
+        self.intersect = self.m1 @ self.m2.T
         #restrict number of intersections (common digits)
         #change to 0 all values < max_intersect
-        #self.intersect = np.where(self.intersect < self.max_intersect, 0, self.intersect)
-
-        sparse_m1 = csr_matrix(self.m1,dtype=np.int8)
-        del self.m1
-        sparse_m2 = csr_matrix(self.m2,dtype=np.int8)
-        del self.m2
-        sparse_intersect = sparse_m1.dot(sparse_m2.T)
-        self.intersect = sparse_intersect.todense()
-        del sparse_intersect
         self.intersect = np.where(self.intersect < self.max_intersect, 0, self.intersect)
-        
-        gc.collect()
         
         print("end intersect")
         
@@ -180,6 +169,14 @@ class Reducere():
         #test 10 numbers (1st choice: total 55 intersections) for max_intersect = 4
         #print(self.fv(self.intersect[0]))
         
+        #print("Free mem: m1,m2")
+        #try:
+        #    del self.m1
+        #    del self.m2
+        #except:
+        #    pass
+        #gc.collect()        
+
     def cover(self):
         #print(np.sum(self.intersect[[self.solutions],:],axis=1))
         solIntersects = self.intersect[[self.solutions],:] 
@@ -306,8 +303,7 @@ class Reducere():
         print("Total c6(verif): ", np.sum(c6_total_cover_fv,axis=0)[1])        
     
     def go(self,criterion,max_cover):
-        #memory garbage collector
-        gc.enable()
+        #free unused memory
         gc.collect()
 
         self.solutions = []
@@ -351,6 +347,6 @@ class Reducere():
 #m=10
 #max_intersect = 4
 #arr = np.arange(start=1, stop=m+1, step=1)
-#calc = Reducere(arr,max_intersect,nsigma=200)
+#calc = Reducere(arr,max_intersect,nsigma=100)
 #calc.go(criterion='max',max_cover='-')
 #calc.go(criterion='stddev',max_cover=100)

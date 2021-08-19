@@ -160,9 +160,9 @@ class Reducere():
         #change to 0 all values < max_intersect
         #self.intersect = np.where(self.intersect < self.max_intersect, 0, self.intersect)
 
-        sparse_m1 = csr_matrix(self.m1,dtype=np.int8)
+        sparse_m1 = csr_matrix(self.m1)
         del self.m1
-        sparse_m2 = csr_matrix(self.m2,dtype=np.int8)
+        sparse_m2 = csr_matrix(self.m2)
         del self.m2
         sparse_intersect = sparse_m1.dot(sparse_m2.T)
         self.intersect = sparse_intersect.todense()
