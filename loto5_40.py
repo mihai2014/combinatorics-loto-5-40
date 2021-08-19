@@ -85,8 +85,10 @@ class Reducere():
 
         if (k==6):
             means = np.mean(comb,axis=1)
-            mu = np.mean(means)
-            sigma = np.std(means)
+            #mu = np.mean(means)
+            #sigma = np.std(means)
+            mu = 20
+            sigma = 5
             print("miu-mean",mu,"sigma-stdev", sigma)
             self.margin2 = mu+sigma*self.nsigma
             self.margin1 = mu-sigma*self.nsigma   
@@ -329,7 +331,7 @@ class Reducere():
                 i+=1
                 score = self.select(i,f)
                 
-            self.diagnose()    
+            #self.diagnose()    
 
         f.close()
 
@@ -339,9 +341,9 @@ class Reducere():
        
 #arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 #or
-m=10
-max_intersect = 4
-arr = np.arange(start=1, stop=m+1, step=1)
-calc = Reducere(arr,max_intersect,nsigma=100)
-calc.go(criterion='max',max_cover='-')
+#m=10
+#max_intersect = 4
+#arr = np.arange(start=1, stop=m+1, step=1)
+#calc = Reducere(arr,max_intersect,nsigma=100)
+#calc.go(criterion='max',max_cover='-')
 #calc.go(criterion='stddev',max_cover=100)
