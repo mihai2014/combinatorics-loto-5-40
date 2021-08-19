@@ -235,7 +235,8 @@ class Reducere():
             print(cover)
             print(i,"intersect:",nonzero[first_max_idx], "c5 selection (index):",first_max_idx, self.c1[first_max_idx])
 
-            f.write( str(self.c1[first_max_idx])+'\n' )
+            c = self.c1[first_max_idx]
+            f.write(f"{i},{c[0]},{c[1]},{c[2]},{c[3]},{c[4]}\n")
             self.solutions.append(first_max_idx)
         
         #mark selection
