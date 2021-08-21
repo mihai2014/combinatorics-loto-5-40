@@ -32,7 +32,7 @@ class Reducere2():
         print("m5-",self.m5.shape)
         dim = self.m5.shape[0]
         #init intersect file on disk
-        fp_intersect = np.memmap('data_c5.bin', dtype=np.int8, mode='w+', shape=(dim,dim))
+        #fp_intersect = np.memmap('data_c5.bin', dtype=np.int8, mode='w+', shape=(dim,dim))
     
     def comb(self, arr, k):
         # return list of all subsets of length k
@@ -70,27 +70,52 @@ class Reducere2():
         
     def calc_intersect(self):
         dim = self.m5.shape[0]        
-        self.fp_intersect = np.memmap('data_c5.bin', dtype=np.int8, mode='r+', shape=(dim,dim))        
-        #data = np.zeros((dim,dim), dtype = np.int8)
-        #fp_intersect[:]=data[:]
-        #row1
-        #fp_intersect[1,:] = np.ones((1,dim), dtype = np.int8)
-        #row2
-        #fp_intersect[2,:] = np.ones((1,dim), dtype = np.int8)
+
+        state = -1
+        try:
+            f = open("state.init", mode = 'r')
+            state = int(f.readline())
+            print(state)
+            f.close
+        except:
+            pass
+
+        if(state == -1):
+            #init new intersect file on disk
+            self.fp_intersect = np.memmap('data_c5.bin', dtype=np.int8, mode='w+', shape=(dim,dim))
+        else:
+            #append data to existing file on disk
+            self.fp_intersect = np.memmap('data_c5.bin', dtype=np.int8, mode='r+', shape=(dim,dim))
+
+        f = open("state.init", mode = 'w+')
 
         print("start generating intersections file...")
         #scan1
         #start = time.time()
         for i in range(dim):
-            print(dim,"<--",i)
-            row1 = self.m5[i,:]    
-            for j in range(dim):
-                #print(i,j)
-                row2 = self.m5[j,:]    
-                result = row1@row2
-                self.fp_intersect[i,j] = result
+
+            if(i > state):
+
+                print(dim,"<--",i)
+                row1 = self.m5[i,:]    
+                for j in range(dim):
+                    #print(i,j)
+                    row2 = self.m5[j,:]    
+                    result = row1@row2
+                    self.fp_intersect[i,j] = result
+                #write modif(a row)
+                self.fp_intersect.flush()
+                #record last state(last row recorder) - overwrite init file
+                #f.write(str(i))
+                data = f.read()
+                f.seek(0)
+                f.write(str(i))
+                f.truncate()                
+                
         #end = time.time()
         #print(end - start)            
+
+        f.close()
 
         #scan2
         #it = np.nditer(self.m5, flags=['f_index'],order='C')
@@ -109,7 +134,7 @@ class Reducere2():
         #print(end - start)                 
             
         #write modif
-        self.fp_intersect.flush()
+        #self.fp_intersect.flush()
 
 
     def load(self):
@@ -124,11 +149,11 @@ class Reducere2():
         gc.collect()
         self.calc_intersect()
         #verif
-        self.load()
+        #self.load()
     
 #arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 #or
-m=40
+m=30
 arr = np.arange(start=1, stop=m+1, step=1)
 calc = Reducere2(arr)   
 calc.go()
