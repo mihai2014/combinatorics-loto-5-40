@@ -25,7 +25,6 @@ import os
 import gc
 import time
 import pickle
-import time
 
 #def delete_row_lil(mat, i):
 #    if not isinstance(mat, scipy.sparse.lil_matrix):
@@ -37,11 +36,8 @@ import time
 class Reducere():
     def __init__(self, arr):
         self.n = len(arr)
-        start = time.time()
         self.m5, self.c5 = self.matrix5(arr)
-        end = time.time()
         print("memory m5 ready:",self.m5.shape)
-        print(end - start,"seconds")
         dim = self.m5.shape[0]
         #binar list #################################
         self.solutions = []
@@ -82,36 +78,6 @@ class Reducere():
             i += 1
 
         return z, comb   
-
-    
-    def matrix6(self,arr):
-        comb = self.comb(arr,6)
-        cols = self.n
-        rows = math.comb(cols,6)
-
-        #z = np.zeros((rows,cols), dtype = np.int8)
-        z = lil_matrix((rows, cols), dtype=np.int8)
-        i = 0
-        for c in comb:
-            
-            n1 = c[0]
-            n2 = c[1]
-            n3 = c[2]
-            n4 = c[3]
-            n5 = c[4]
-            n6 = c[5]
-
-            z[i,n1-1] = 1
-            z[i,n2-1] = 1
-            z[i,n3-1] = 1
-            z[i,n4-1] = 1
-            z[i,n5-1] = 1
-            z[i,n6-1] = 1
-                
-            #print(i,z[i])
-            i += 1
-
-        return z, comb       
     
     def process_intersect(self):
         dim = self.m5.shape[0]    
@@ -183,34 +149,7 @@ class Reducere():
         print("Sums:",s.sum(axis=0))
 
     def cover(self):
-        self.save_state()
-        start = time.time()
-        self.m6, self.c6 = self.matrix6(arr)
-        end = time.time()
-        print("memory m6 ready:",self.m6.shape)
-        print(end - start,"seconds")
-        
-        c6_hit_indexes = []
-        s5 = np.array(self.solutions)
-        for s in s5:
-            index = 0
-            for c6 in self.m6:
-                c6 = c6.toarray()[0]
-                #print("5:",s)
-                #print("6:",c6.toarray()[0])
-                intersections = s@c6
-                
-                if(intersections >= 4):
-                    #print(intersections)
-                    c6_hit_indexes.append(index)
-                index += 1    
-                
-        #print(c6_hit_indexes)
-        hit_c6 = np.array(c6_hit_indexes)
-        hit_c6 = np.unique(hit_c6)        
-        hit_c6 = hit_c6.shape[0]
-        all_c6 = self.m6.shape[0]
-        print("Cover - total", hit_c6, hit_c6*100/all_c6,"%")
+        pass
 
     def interpret(self):
         self.save_state()
@@ -218,7 +157,8 @@ class Reducere():
         c5_array = np.array(self.c5)
         solution = c5_array[self.solutions2,:]
         for c in solution:
-            print(f"{c[0]},{c[1]},{c[2]},{c[3]},{c[4]}")        
+            print(f"{c[0]},{c[1]},{c[2]},{c[3]},{c[4]}")
+        
     
     def go(self):
         self.save_state()
@@ -232,4 +172,3 @@ arr = np.arange(start=1, stop=m+1, step=1)
 calc = Reducere(arr) 
 calc.go()
 #calc.interpret()
-#calc.cover()
