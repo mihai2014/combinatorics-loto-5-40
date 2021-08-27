@@ -46,3 +46,13 @@ gives a scheme of 10 numbers:
 (1, 2, 3, 4, 5)
 
 Any combination of 6 numbers from 1...10 will intesect at least one the above sets with at least 4 common numbers
+
+Additional tools:
+
+intersect.py generates c5 which had only 2 numbers in common (at most).
+Modify m in script (max number in the set).
+For big sets (~ m > 15-20), depending on the hardware, the state is saved in 'data_c5.bin' and could be resumed the process if script stopped anytime. 
+If m changed, delete data_c5.bin!
+This file retain choosed c5 indexes in pickle bin format.
+For retrieve solution, just comment go() procedure and activate interpret().
+
