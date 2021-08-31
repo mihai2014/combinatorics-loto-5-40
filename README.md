@@ -50,7 +50,8 @@ Any combination of 6 numbers from 1...10 will intesect at least one the above se
 
 Additional tools:
 
-intersect.py generates c5 which had only 2 numbers in common (at most) with themselfes.
+
+* intersect.py generates c5 which had only 2 numbers in common (at most) with themselfes.
 
 Modify m in script (max number in the set).
 
@@ -63,4 +64,9 @@ This file retain choosed c5 indexes in pickle bin format.
 For retrieve solution, just comment go() procedure and activate interpret().
 
 cover() gives all c6 that have at least 4 common numbers with c5 chosen above.
+
+
+* intersect2.py is equivalent to  intersect.py, except that not using matrices, just lists
+
+Select m, execute go(), then comment go and uncomment display_matrix() and/or cover() to see the solutions and how many intesections of 4 numbers there are with c6
 
