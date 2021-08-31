@@ -162,7 +162,7 @@ class Reducere():
     def go(self,m):
         self.recover_state(m)
         self.process_intersect()
-        self.display_matrix()
+        self.display_matrix(m)
 
 #select m, execute go(), then comment go and uncomment display_matrix() and/or cover()
 
